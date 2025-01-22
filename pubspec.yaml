@@ -1,0 +1,26 @@
+name: flutter_gdrive_kiosk
+description: "En kiosk för att visa bilder från en google drive fil på en utomhusskärm"
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  googleapis: ^11.4.0
+  googleapis_auth: ^1.6.0
+  flutter_spinkit: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: false
+
+  assets:
+    - assets/credentials.json
+    - assets/folder_id.txt
