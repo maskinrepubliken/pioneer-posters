@@ -37,6 +37,7 @@ Future<List<io.File>> downloadImagesFromGoogleDrive() async {
 
     // List the files in the folder
     final query = "'$folderId' in parents and mimeType contains 'image/'";
+    print('Running google drive query: $query');
     final files = await api.files.list(
       q: query,
       $fields: 'files(id, name)',
