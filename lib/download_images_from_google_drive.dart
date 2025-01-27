@@ -42,11 +42,13 @@ Future<List<io.File>> downloadImagesFromGoogleDrive() async {
       q: query,
       $fields: 'files(id, name)',
     );
+    print('Ok!');
 
     // Try to download each image in the google drive folder
     if (files.files == null || files.files!.isEmpty) {
       print('No images found in the drive folder.');
     } else {
+      print('Downloading files...');
       for (final onlineFile in files.files!) {
         final fileId = onlineFile.id!;
         final fileName = '${onlineFile.name!}-${onlineFile.id!}';
