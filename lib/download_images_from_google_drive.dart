@@ -74,8 +74,9 @@ Future<List<io.File>> downloadImagesFromGoogleDrive() async {
         }
       }
     }
-  } catch (e) {
+  } catch (e, s) {
     print('Error downloading images: $e');
+    print('Stack trace: $s');
   } finally {
     client.close();
   }
