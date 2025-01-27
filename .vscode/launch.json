@@ -1,31 +1,36 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Flutter",
-			"type": "dart",
-			"request": "launch",
-			"program": "lib/main.dart"
-		},
-		{
-			"name": "flutter-gdrive-kiosk",
-			"request": "launch",
-			"type": "dart"
-		},
-		{
-			"name": "flutter-gdrive-kiosk (profile mode)",
-			"request": "launch",
-			"type": "dart",
-			"flutterMode": "profile"
-		},
-		{
-			"name": "flutter-gdrive-kiosk (release mode)",
-			"request": "launch",
-			"type": "dart",
-			"flutterMode": "release"
-		}
-	]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "flutter-gdrive-kiosk",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "flutter-gdrive-kiosk (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "flutter-gdrive-kiosk (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "flutter-elinux: Attach",
+            "request": "attach",
+            "type": "dart",
+            "deviceId": "flutter-tester",
+            "cwd": "${workspaceFolder}",
+            "vmServiceUri": "http://127.0.0.1:33791/xj9nLvaUYt8=/"
+        }
+    ]
 }
