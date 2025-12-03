@@ -7,7 +7,6 @@ import 'download_images_from_google_drive.dart';
 import 'logger_utility.dart';
 
 final slideshowDuration = 8;
-final refreshDuration = slideshowDuration * 4;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +34,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   int _index = -1;
   List<File> _fileList = List.empty(growable: true);
+  List<File> _pendingFileList = List.empty(growable: true);
+  bool _hasPendingUpdate = false;
 
   @override
   void initState() {
@@ -44,16 +45,27 @@ class _AppState extends State<App> {
     // Initial download
     _downloadImages();
 
-    Timer.periodic(Duration(seconds: refreshDuration), (timer) async {
-      _downloadImages();
-    });
-
     Timer.periodic(Duration(seconds: slideshowDuration), (timer) {
       setState(() {
         _index += 1;
+
+        // Check if we've completed a cycle
         if (_index >= _fileList.length) {
           _index = 0;
+
+          // Apply pending file list if available
+          if (_hasPendingUpdate) {
+            _fileList = _pendingFileList;
+            _pendingFileList = List.empty(growable: true);
+            _hasPendingUpdate = false;
+            AppLogger.info(
+                'Applied new image list with ${_fileList.length} images');
+          }
+
+          // Start downloading new images for next cycle
+          _downloadImages();
         }
+
         if (_index >= 0 && _fileList.isNotEmpty) {
           AppLogger.debug(
               'Showing image ${_index + 1} of ${_fileList.length}: ${_fileList[_index].path}');
@@ -66,11 +78,20 @@ class _AppState extends State<App> {
     try {
       AppLogger.info('Starting image download from Google Drive');
       final fileList = await downloadImagesFromGoogleDrive();
+
       setState(() {
-        _fileList = fileList;
-        _index = 0;
+        if (_fileList.isEmpty) {
+          // First time loading - use immediately
+          _fileList = fileList;
+          _index = 0;
+          AppLogger.info('Initial load: ${fileList.length} images');
+        } else {
+          // Store for next cycle
+          _pendingFileList = fileList;
+          _hasPendingUpdate = true;
+          AppLogger.info('Downloaded ${fileList.length} images for next cycle');
+        }
       });
-      AppLogger.info('Successfully downloaded ${fileList.length} images');
     } catch (e, stackTrace) {
       AppLogger.error('Failed to download images', e, stackTrace);
     }
