@@ -4,12 +4,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'download_images_from_google_drive.dart';
+import 'logger_utility.dart';
 
 final slideshowDuration = 8;
 final refreshDuration = slideshowDuration * 4;
 
 void main() async {
-  //await cleanDownloadsDirectory();
+  WidgetsFlutterBinding.ensureInitialized();
+  AppLogger.init();
+  AppLogger.info('Application starting...');
+
+  try {
+    AppLogger.info('Cleaning downloads directory...');
+    await cleanDownloadsDirectory();
+    AppLogger.info('Downloads directory cleaned successfully');
+  } catch (e, stackTrace) {
+    AppLogger.error('Failed to clean downloads directory', e, stackTrace);
+  }
+
   runApp(const App());
 }
 
@@ -27,13 +39,13 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    AppLogger.info('App state initialized');
+
+    // Initial download
+    _downloadImages();
 
     Timer.periodic(Duration(seconds: refreshDuration), (timer) async {
-      final fileList = await downloadImagesFromGoogleDrive();
-      setState(() {
-        _fileList = fileList;
-        _index = 0;
-      });
+      _downloadImages();
     });
 
     Timer.periodic(Duration(seconds: slideshowDuration), (timer) {
@@ -42,8 +54,26 @@ class _AppState extends State<App> {
         if (_index >= _fileList.length) {
           _index = 0;
         }
+        if (_index >= 0 && _fileList.isNotEmpty) {
+          AppLogger.debug(
+              'Showing image ${_index + 1} of ${_fileList.length}: ${_fileList[_index].path}');
+        }
       });
     });
+  }
+
+  Future<void> _downloadImages() async {
+    try {
+      AppLogger.info('Starting image download from Google Drive');
+      final fileList = await downloadImagesFromGoogleDrive();
+      setState(() {
+        _fileList = fileList;
+        _index = 0;
+      });
+      AppLogger.info('Successfully downloaded ${fileList.length} images');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to download images', e, stackTrace);
+    }
   }
 
   @override
