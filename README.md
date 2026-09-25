@@ -1,24 +1,39 @@
-# flutter-gdrive-kiosk
+# Pioneer Posters
 
-A flutter project that display all images from a google drive folder in a repeating slideshow. For a Raspberry PI running wayland in kiosk mode for a digital display mounted outside the local cinema. i.e. its for repeating movie posters
+A slideshow kiosk for a Raspberry Pi: it shows every image in a Google Drive folder as a repeating
+slideshow. Built for a display mounted outside the local cinema, where it shows movie posters.
+
+## Part of the pioneer series
+
+This is a pioneer project from Maskinrepubliken. Pioneer projects are small programs that run on a Raspberry Pi, each built for one specific place and purpose. They are open source, so you can read, change and run the code yourself. The code is kept small and plainly structured, which makes it easy to adapt, with or without AI tools. Treat it as a starting point for your own setup, not a finished product.
+
+## What it does
+
+A Flutter app, built for Linux with [flutter-elinux](https://github.com/sony/flutter-elinux), that
+downloads the images in a Google Drive folder with a service account and loops through them full screen.
+Change the posters by changing the files in the folder; nothing on the Pi needs to be touched.
+
+- `lib/main.dart` the slideshow
+- `lib/download_images_from_google_drive.dart` fetches the images from Drive
+- `lib/asset_loaders.dart`, `lib/logger_utility.dart` configuration and logging
+
+## Hardware
+
+A Raspberry Pi (64-bit OS) running the [Weston](https://wiki.archlinux.org/title/Weston) Wayland
+compositor in kiosk mode, connected to a display.
 
 ## Getting started
 
-1. Create `assets/folder_id.txt` and add the id of the google drive folder with images in it.
+1. Create `assets/folder_id.txt` with the id of the Google Drive folder that holds the images.
+2. Create a Google service account with access to the folder and save its key as `assets/credentials.json`.
+   Both files are bundled into the build as assets: keep them out of git.
+3. Install dependencies with `flutter pub get` and
+   [create a release build](https://github.com/sony/flutter-elinux/wiki/Building-flutter-apps) with
+   `flutter-elinux build elinux`.
 
-2. Create a Google Service Account and add the credentials to the file `assets/credentials.json`. The account must have access to the folder.
+## Kiosk mode
 
-3. Run the application! For my use case its run under the [weston](https://wiki.archlinux.org/title/Weston) compositor for wayland using [flutter-elinux](https://github.com/sony/flutter-elinux).
-
-## Build using flutter-elinux
-
-1. Clone and initialize the repository with `flutter pub get`.
-
-2. [Create](https://github.com/sony/flutter-elinux/wiki/Building-flutter-apps) a release build using `flutter-elinux build elinux`.
-
-## Use the application in kiosk mode
-
-For my uses weston is launched on startup with the following configuration in `weston.ini`:
+Weston is started at boot with this `weston.ini`, so the app runs full screen without any other UI:
 
 ```ini
 [shell]
@@ -31,13 +46,14 @@ background-color=0xFF0000FF
 path=/home/pi/startup
 ```
 
-This makes the application launch in fullscreen without any gui elements, the file `/home/pi/startup` looks like this:
+`/home/pi/startup`:
 
 ```bash
 #!/bin/bash
-
-# Launch the application
-
 cd ./kiosk
 FLUTTER_LOG_LEVELS=TRACE ./build/elinux/arm64/release/bundle/flutter-gdrive-kiosk -b . -f
 ```
+
+## License
+
+MIT, see [LICENSE](LICENSE). Copyright (c) 2025–2026 Viktor Lyresten / Maskinrepubliken.
